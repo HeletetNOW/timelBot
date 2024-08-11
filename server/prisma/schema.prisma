@@ -1,0 +1,49 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       String @id 
+  projects Project[]
+  timers   Timer[]
+}
+
+model Timer {
+  id            Int @id @default(autoincrement())
+  authorId      String
+  author        User @relation(fields: [authorId], references: [id])
+  timerName     String
+  subProjects   SubProject[]
+  startTime     DateTime
+  pauseTimer    Boolean
+  sumTime       Int
+  addTimer      DateTime
+}
+
+model Project{
+  id          Int @id @default(autoincrement())
+  authorId    String
+  sumTime     Int
+  status      Boolean
+  author      User @relation(fields: [authorId], references: [id])
+  subProjects  SubProject[] 
+  projectName String
+  description String
+}
+
+model SubProject{
+  id          Int @id @default(autoincrement())
+  status      Boolean
+  subProjectName String
+  description String
+  projectId   Int
+  sumTime     Int
+  timers      Timer[]
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade )
+}
